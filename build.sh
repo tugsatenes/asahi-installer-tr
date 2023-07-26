@@ -24,32 +24,32 @@ rm -rf "$PACKAGE"
 mkdir -p "$DL" "$PACKAGE" "$RELEASES" "$RELEASES_DEV"
 mkdir -p "$PACKAGE/bin"
 
-echo "Determining version..."
+echo "Sürüm denetleniyor..."
 
 VER=$(git describe --always --dirty --tags)
 
-echo "Version: $VER"
+echo "Sürüm: $VER"
 
 if [ -z "$VER" ]; then
     if [ -e version.tag ]; then
         VER="$(cat version.tag)"
     else
-        echo "Could not determine version!"
+        echo "Sürüm denetlenemedi!"
         exit 1
     fi
 fi
 
-echo "Downloading installer components..."
+echo "Yükleyici bileşenleri indiriliyor..."
 
 cd "$DL"
 
 wget -Nc "$PYTHON_URI"
 
-echo "Building m1n1..."
+echo "m1n1 derleniyor..."
 
 make -C "$M1N1" RELEASE=1 CHAINLOADING=1 -j4
 
-echo "Copying files..."
+echo "Dosyalar kopyalanıyor..."
 
 cp -r "$SRC"/* "$PACKAGE/"
 rm "$PACKAGE/asahi_firmware"
@@ -58,7 +58,7 @@ cp "$ARTWORK/logos/icns/AsahiLinux_logomark.icns" "$PACKAGE/logo.icns"
 mkdir -p "$PACKAGE/boot"
 cp "$M1N1/build/m1n1.bin" "$PACKAGE/boot"
 
-echo "Extracting Python framework..."
+echo "Python framework'ü (arşivden) çıkartılıyor..."
 
 mkdir -p "$PACKAGE/Frameworks/Python.framework"
 
@@ -83,12 +83,12 @@ cd lib-dynload
 rm -f _test* _tkinter*
     
 
-echo "Copying certificates..."
+echo "Sertifikalar kopyalanıyor..."
 
 certs="$(python3 -c 'import certifi; print(certifi.where())')"
 cp "$certs" "$PACKAGE/Frameworks/Python.framework/Versions/Current/etc/openssl/cert.pem"
 
-echo "Packaging installer..."
+echo "Yükleyici paketleniyor..."
 
 cd "$PACKAGE"
 
@@ -109,4 +109,4 @@ tar czf "$PKGFILE" .
 echo "$VER" > "$LATEST"
 
 echo
-echo "Built package: $(basename "$PKGFILE")"
+echo "Paketlendi: $(basename "$PKGFILE")"
